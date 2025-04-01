@@ -1,0 +1,62 @@
+ Two types of OO langauages
+  
+  - Class based 
+    Ex.Java, C++ , C#
+    A class is a TYPE, describes a set of object that will:
+        share some properties
+        meet some requirments
+        adding properties or requirments will be constraints to the type so fewer objects have the properties/requirments
+
+  - Object based
+    ex. Smalltalk Objective C
+    Object is an instance of a class
+        simply one of the set of object denoted by the class
+        when a program starts, it has alot of class but (often) no instances
+        instances are created when runtime is executed
+
+
+Top Down vs. Bottom Up approach
+
+     - Top Down 
+        problem is broken down to smaller pieces
+        used with C, structured programming approach
+        used with documentation of module and debugging code
+        contains redundant info
+        decomposition approach
+            - big picture break it down to small part to solve the problem  
+            
+
+    - Bottom Up
+        smaller problems are solved
+        used with oop C++, Java
+        used in testing modules
+        no redundant info
+        composition approach
+            - start with the small pieces and create small things and then combine these small things for the solution to the big picture
+        data encapsulation and data hiding is implemented in this approach
+
+Functional Programming 
+
+    way of thinking about how to structure code
+    using functions to approach everything in code?
+
+Tokens
+    
+    smallest element of a c++ program that is meaningful for the compiler
+    ex.
+        int 
+        float 
+        if else
+        namespace 
+        const 
+        static
+
+namespace
+
+    named entities
+    packages from java basically
+    
+
+
+
+

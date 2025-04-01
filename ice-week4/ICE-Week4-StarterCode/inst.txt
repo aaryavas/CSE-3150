@@ -1,0 +1,35 @@
+Part one: programming practice
+
+1. Constant and pointer
+You are given an array of integers. You would loop and sum up the values in the array and 
+print out the sum. 
+Here, you don't want to mess up the array. So some sort of "const" is needed. 
+Now how are you going to declare and define this function (check the starter code)? 
+
+2. Practice pointer and function
+Function pointer is a very useful thing in C++. We now practice its use in a simple 
+situation, sorting. Here, you need to implement a simple sorting function that takes a 
+list of integers and also a function pointer that compares two numbers x and y 
+(and return true if x should be placed earlier than y, and false otherwise). 
+Look at the starter code and start by defining the function pointer. 
+
+3. Casting
+In this practice, we practice various aspects of castings in C++. 
+Look at the starter code. Fill in the missing parts of casting. 
+Note: use the best possible casting. 
+
+4. Fixing error in my code. You want to implement a function that takes a string x, 
+and make sure after the function call, x contains a prefix of x with length of at
+most five. I have written up a piece of code but it doesn't quite work. 
+Your task is fixing it.
+
+5. Coding practice. 
+You are given a string which represents a unsigned decimal number. 
+You want to construct and return a string that represents the inverse of this 
+number. 
+For example, if you are given 1102, you would return "2011". 
+You may assume the given string is in valid decimal format.
+
+Note: you shouldn't output leading zeros in the constructed number. 
+That is, the string you construct should follow the convention for decimal number we 
+normally use. For now, you may assume the given string doesn't have leading zeros.
