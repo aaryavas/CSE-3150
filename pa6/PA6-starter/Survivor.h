@@ -35,4 +35,13 @@ public:
     void ReceiveAttack(int damage) override;
 };
 
+
+// Brawler: attacks and gains damage +2 after attack
+class Brawler: public Survivor{
+public:
+    Brawler(const std::string &id, int health, int damage, int damage_additive);
+    void TakeTurn(Combatant* target) override;
+    void RecieveAttack(int damage) override;
+    
+};
 #endif

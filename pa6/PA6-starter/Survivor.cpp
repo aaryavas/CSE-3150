@@ -77,6 +77,8 @@ void Scavenger::ReceiveAttack(int dmg) {
 
 //Brawler - subclass survivor
 //every time killss a mutant, gains +2 damage for future attacks
+Brawler::Brawler(const std::string &id, int health, int damage, int damage_additive)
+    : Survivior(id, health, damage)
 
 //acrobat - subclass survivor
 //like scavenger but every four turns
