@@ -80,11 +80,13 @@ void Scavenger::ReceiveAttack(int dmg) {
 Brawler::Brawler(const std::string &id, int health, int damage)
     : Survivor(id, health, damage) {}
 
+
 void Brawler::TakeTurn(Combatant* target){
     ProcessPoison();
-    cout << GetID() << "attacks" << target->GetID() << ". ";
+    cout << GetID() << " attacks " << target->GetID() << ". ";
     target->ReceiveAttack(damage);
     
+    //this part may need to be repositioned and reworked to work work out later
     if(IsDead()){
         damage += 2;    
     }
@@ -99,6 +101,34 @@ void Brawler::ReceiveAttack(int dmg){
 //acrobat - subclass survivor
 //like scavenger but every four turns
 //dodge ability on turn 0, again on turn 4 and 8
+Acrobat::Acrobat(const std::string &id, int health, int damage, int turn_counter)
+    : Survivor(id, health, damage), dodgeAvailable(false), turnCounter(0), dodgeAmount(0){}
+
+void Acrobat::TakeTurn(Combatant* target){
+    ProcessPoison();
+    cout << GetID() << " attacks " << target->GetID() << ". ";
+    target->ReceiveAttack(damage);
+
+    //need to implement dodge function every four turns 
+    turnCounter++;
+    if(turnCounter % 4 == 0){
+        dodgeAvailable = true;
+        dodgeAmount++;
+    }
+}
+void Acrobat::ReceiveAttack(int dmg){
+    if(!dodgeAvailable){
+        setHealth(health-dmg);
+    }
+    
+    cout << GetID() << " recieves " << dmg << "damage. Health = " << GetHealth() << endl;
+}
+
+
+
+
+
+
 //if eliminates fast enough to avoid incoming attacks retains dodge ability until needed
 //meaning it doesn't waste dodges
 //still regains dodges every four turns

@@ -33,6 +33,7 @@ public:
     Scavenger(const std::string &id, int health, int damage);
     void TakeTurn(Combatant* target) override;
     void ReceiveAttack(int damage) override;
+
 };
 
 
@@ -41,7 +42,19 @@ class Brawler: public Survivor{
 public:
     Brawler(const std::string &id, int health, int damage);
     void TakeTurn(Combatant* target) override;
+    void ReceiveAttack(int damage) override;    
+};
+
+
+// Acrobat - every four turns can dodge the next incoming attack
+class Acrobat: public Survivor{
+public:
+    Acrobat(const std::string &id, int health, int damage, int turn_counter);
+    void TakeTurn(Combatant* target) override;
     void ReceiveAttack(int damage) override;
-    
+private:
+    bool dodgeAvailable;
+    int turnCounter;
+    int dodgeAmount;
 };
 #endif
