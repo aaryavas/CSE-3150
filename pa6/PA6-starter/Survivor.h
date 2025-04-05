@@ -49,12 +49,25 @@ public:
 // Acrobat - every four turns can dodge the next incoming attack
 class Acrobat: public Survivor{
 public:
-    Acrobat(const std::string &id, int health, int damage, int turn_counter);
+    Acrobat(const std::string &id, int health, int damage);
     void TakeTurn(Combatant* target) override;
     void ReceiveAttack(int damage) override;
 private:
     bool dodgeAvailable;
     int turnCounter;
     int dodgeAmount;
+};
+
+//medic- every 3 turns medic heals itself
+class Medic: public Survivor{
+public:
+    Medic(const std::string &id, int health, int damage);
+    void TakeTurn(Combatant* target) override;
+    void ReceiveAttack(int damage) override;
+
+private:
+    bool healStatus;
+    int turnCounter;
+    bool healPoints;
 };
 #endif

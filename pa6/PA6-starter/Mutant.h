@@ -32,6 +32,19 @@ public:
     Zombie(const std::string &id, int health, int damage);
     void TakeTurn(Combatant* target) override;
     void ReceiveAttack(int damage) override;
-};    
+};
+
+// Replicator: Creates copy of itself every turn - come back to this 
+class Replicator : public Mutant {
+public:
+    Replicator(const std::string &id, int health, int damage);
+    void TakeTurn(Combatant* target) override;
+    void ReceiveAttack(int damage) override;
+private:
+    //some pointer maybe?
+
+};
+
+class 
 
 #endif

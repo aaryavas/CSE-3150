@@ -1,7 +1,7 @@
 #include "Survivor.h"
 #include <iostream>
 using namespace std;
-
+#include "Mutant.h"
 //survivor will perform one attack every turn
 
 //behavior will be dependant on how subclass implements TakeTurn function
@@ -101,7 +101,7 @@ void Brawler::ReceiveAttack(int dmg){
 //acrobat - subclass survivor
 //like scavenger but every four turns
 //dodge ability on turn 0, again on turn 4 and 8
-Acrobat::Acrobat(const std::string &id, int health, int damage, int turn_counter)
+Acrobat::Acrobat(const std::string &id, int health, int damage)
     : Survivor(id, health, damage), dodgeAvailable(false), turnCounter(0), dodgeAmount(0){}
 
 void Acrobat::TakeTurn(Combatant* target){
@@ -119,19 +119,32 @@ void Acrobat::TakeTurn(Combatant* target){
 void Acrobat::ReceiveAttack(int dmg){
     if(!dodgeAvailable){
         setHealth(health-dmg);
+        cout << GetID() << " recieves " << dmg << "damage. Health = " << GetHealth() << endl;
     }
-    
-    cout << GetID() << " recieves " << dmg << "damage. Health = " << GetHealth() << endl;
+    cout << GetID() << " dodge the attack! ";
 }
 
 
+Medic::Medic(const std::string &id, int health, int damage)
+    :Survivor(id,health,damage), healStatus(false), turnCounter(0), healPoints(0){}
+    
+void Medic::TakeTurn(Combatant* target){
+    if(turnCounter % 3 == 0){
+        healStatus = true;
+        poisonCounter = 0;
+        health += 5; 
+        cout << GetID() << " heals itself, the new health is " << health << ". "; 
+    }
+    ProcessPoison();
+    cout << GetID() << " attacks " << target->GetID() << ". ";
+    target->ReceiveAttack(damage);
+    turnCounter++;
+}
 
-
-
-
-//if eliminates fast enough to avoid incoming attacks retains dodge ability until needed
-//meaning it doesn't waste dodges
-//still regains dodges every four turns
+void Medic::ReceiveAttack(int dmg){
+    setHealth(health-dmg);
+    cout << GetID() << " recieves " << dmg << "damage. Health = "<< GetHealth() <<endl;
+}
 
 //medic -subclass survivor
 //like survivor attacks first mutant every turn but is equipped with medical ability

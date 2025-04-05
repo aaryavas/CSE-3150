@@ -51,6 +51,23 @@ void Zombie::ReceiveAttack(int dmg) {
 //clones are added at the end of remainingMutants vector
 //need pointer to its survivor camp to add new mutants to the encounter list
 
+
+//come back to this
+Replicator::Replicator(const std::string &id, int health, int damage)
+    :Mutant(id, health, damage) {}
+
+void Replicator::TakeTurn(Combatant* target) {
+    cout << GetID() << " attacks " << target->GetID() << ". ";
+    target->ReceiveAttack(damage);
+
+}
+
+void Replicator::ReceiveAttack(int dmg) {
+    setHealth(health-dmg);
+    cout << GetID() << " takes " << dmg << " damage. Health = " << GetHealth() << endl;
+}
+
+
 //splitter
 
 //mutantpack
