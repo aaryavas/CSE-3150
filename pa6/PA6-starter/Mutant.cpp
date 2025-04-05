@@ -69,6 +69,26 @@ void Replicator::ReceiveAttack(int dmg) {
 
 
 //splitter
+Splitter::Splitter(const std::string &id, int health, int damage)
+    :Mutant(id, health, damage),turnCounter(0),acidStatus(false) {}
+
+
+void Splitter::TakeTurn(Combatant* target){
+    if(turnCounter % 2 == 0){
+        acidStatus = true;
+        cout << GetID() << " gives poison" << endl;
+    }
+    else{
+        cout << GetID() << " attacks " << target->GetID() << ". ";
+        target->ReceiveAttack(damage);
+    }
+    turnCounter++;
+}
+
+void Splitter::ReceiveAttack(int dmg){
+    setHealth(health-dmg);
+    cout << GetID() << " takes " << dmg << " damage. Health = " << GetHealth() << endl;  
+}
 
 //mutantpack
 

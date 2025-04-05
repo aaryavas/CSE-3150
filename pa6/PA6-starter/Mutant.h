@@ -40,11 +40,19 @@ public:
     Replicator(const std::string &id, int health, int damage);
     void TakeTurn(Combatant* target) override;
     void ReceiveAttack(int damage) override;
-private:
-    //some pointer maybe?
-
 };
 
-class 
+
+//splitter: fights different
+class Splitter: public Mutant {
+public:
+    Splitter(const std::string &id, int health, int damage);
+    void TakeTurn(Combatant* target) override;
+    void ReceiveAttack(int damage) override;
+private:
+    bool acidStatus; 
+    int turnCounter;
+    
+};
 
 #endif
