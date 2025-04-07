@@ -103,14 +103,15 @@ void Splitter::ReceiveAttack(int dmg){
 
 //mutantpack
 MutantPack::MutantPack(const std::string &id, int health, int damage)
-    :Mutant(id, health, damage) {
-        mutantsInPack.push_back(mutant);
-    }
+    :Mutant(id, health, damage), mutantsInPack() {}
 
 
 bool MutantPack::IsDead() const{
     return mutantsInPack.empty();
 } 
+void MutantPack::AddMutant(Mutant* mutant) {
+    mutantsInPack.push_back(mutant);
+}
 
 void MutantPack::TakeTurn(Combatant* target){
     for(auto* n: mutantsInPack){
@@ -123,10 +124,12 @@ void MutantPack::TakeTurn(Combatant* target){
 void MutantPack::ReceiveAttack(int dmg){
     if(!mutantsInPack.empty()){
         mutantsInPack.front()->ReceiveAttack(dmg);
-        delete mutantsInPack.front();
-        mutantsInPack.erase(mutantsInPack.begin());
-        if(mutantsInPack.empty()){
-            cout << GetID() << " has been defeated " << endl;
+        if(mutantsInPack.front()->IsDead()){
+            delete mutantsInPack.front();
+            mutantsInPack.erase(mutantsInPack.begin());
+            if(mutantsInPack.empty()){
+                cout << GetID() << " has been defeated " << endl;
+            }
         }
     }
 }
