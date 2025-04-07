@@ -53,14 +53,25 @@ void Zombie::ReceiveAttack(int dmg) {
 
 
 //come back to this
-Replicator::Replicator(const std::string &id, int health, int damage)
-    :Mutant(id, health, damage) {}
+Replicator::Replicator(const std::string &id, int health, int damage, SurvivorCamp* ptrCamp)
+    :Mutant(id, health, damage), turnCounter(0), _camp(ptrCamp){}
+
+//copy constructor
+Replicator::Replicator(const Replicator& other)
+    :Mutant(other.GetID(), other.health, other.damage),_camp(other._camp),turnCounter(0){}
 
 void Replicator::TakeTurn(Combatant* target) {
     cout << GetID() << " attacks " << target->GetID() << ". ";
     target->ReceiveAttack(damage);
-
+    if((turnCounter % 2 == 0) && _camp != nullptr){
+        Replicator *clone = new Replicator(*this);//need the copy constructor for this
+        cout << GetID() << " creates clone " << endl;
+    }else if (_camp == nullptr){
+        cerr << GetID() << " has no camp  pointer " << endl;
+    }
+    turnCounter++;
 }
+
 
 void Replicator::ReceiveAttack(int dmg) {
     setHealth(health-dmg);
@@ -91,6 +102,32 @@ void Splitter::ReceiveAttack(int dmg){
 }
 
 //mutantpack
+MutantPack::MutantPack(const std::string &id, int health, int damage)
+    :Mutant(id, health, damage) {
+        mutantsInPack.push_back(mutant);
+    }
 
 
+bool MutantPack::IsDead() const{
+    return mutantsInPack.empty();
+} 
+
+void MutantPack::TakeTurn(Combatant* target){
+    for(auto* n: mutantsInPack){
+        if(!n->IsDead()){
+            target->ReceiveAttack(damage);
+        }
+    }
+}
+
+void MutantPack::ReceiveAttack(int dmg){
+    if(!mutantsInPack.empty()){
+        mutantsInPack.front()->ReceiveAttack(dmg);
+        delete mutantsInPack.front();
+        mutantsInPack.erase(mutantsInPack.begin());
+        if(mutantsInPack.empty()){
+            cout << GetID() << " has been defeated " << endl;
+        }
+    }
+}
 
