@@ -80,20 +80,19 @@ void Scavenger::ReceiveAttack(int dmg) {
 Brawler::Brawler(const std::string &id, int health, int damage)
     : Survivor(id, health, damage) {}
 
-
-void Brawler::TakeTurn(Combatant* target){
+void Brawler::TakeTurn(Combatant* target) {
     ProcessPoison();
     cout << GetID() << " attacks " << target->GetID() << ". ";
     target->ReceiveAttack(damage);
-    
-    //this part may need to be repositioned and reworked to work work out later
-    if(IsDead()){
-        damage += 2;    
+    if(target->IsDead()){
+        setDamage(damage + 2);
+        cout << "Damage increased by 2! New damage = " << GetDamage() << endl;
     }
 }
-void Brawler::ReceiveAttack(int dmg){
-    setHealth(health- dmg);
-    cout << GetID() << " recieves " << dmg << "damage. Health = " << GetHealth() << endl;
+
+void Brawler::ReceiveAttack(int dmg) {
+    setHealth(health - dmg);
+    cout << GetID() << " receives " << dmg << " damage. Health = " << GetHealth() << endl;
 }
 
 
@@ -102,49 +101,54 @@ void Brawler::ReceiveAttack(int dmg){
 //like scavenger but every four turns
 //dodge ability on turn 0, again on turn 4 and 8
 Acrobat::Acrobat(const std::string &id, int health, int damage)
-    : Survivor(id, health, damage), dodgeAvailable(false), turnCounter(0), dodgeAmount(0){}
+    : Survivor(id, health, damage), turnCount(0), canDodge(true) {}
 
-void Acrobat::TakeTurn(Combatant* target){
+void Acrobat::TakeTurn(Combatant* target) {
     ProcessPoison();
+    if(++turnCount % 4 == 0) {
+        canDodge = true;
+    }
     cout << GetID() << " attacks " << target->GetID() << ". ";
     target->ReceiveAttack(damage);
+}
 
-    //need to implement dodge function every four turns 
-    turnCounter++;
-    if(turnCounter % 4 == 0){
-        dodgeAvailable = true;
-        dodgeAmount++;
+void Acrobat::ReceiveAttack(int dmg) {
+    if(canDodge) {
+        canDodge = false;
+        cout << GetID() << " dodged the attack!" << endl;
+    } 
+    else {
+        setHealth(health - dmg);
+        cout << GetID() << " receives " << dmg << " damage. Health = " << GetHealth() << endl;
     }
 }
-void Acrobat::ReceiveAttack(int dmg){
-    if(!dodgeAvailable){
-        setHealth(health-dmg);
-        cout << GetID() << " recieves " << dmg << "damage. Health = " << GetHealth() << endl;
-    }
-    cout << GetID() << " dodge the attack! ";
-}
+
 
 
 Medic::Medic(const std::string &id, int health, int damage)
-    :Survivor(id,health,damage), healStatus(false), turnCounter(0), healPoints(0){}
-    
-void Medic::TakeTurn(Combatant* target){
-    if(turnCounter % 3 == 0){
-        healStatus = true;
-        poisonCounter = 0;
-        health += 5; 
-        cout << GetID() << " heals itself, the new health is " << health << ". "; 
+    : Survivor(id, health, damage), turnCount(0) {}
+
+void Medic::TakeTurn(Combatant* target) {
+    if(turnCount++ % 3 == 0) {
+        setHealth(health + 5);
+        
+        cout << GetID() << " heals for 5";
+        if (poisonCounter != 0){
+            poisonCounter = 0;
+            cout << " and is no longer poisoned";
+        }
+        cout << ". New health = " << GetHealth() << ".\n";
     }
     ProcessPoison();
     cout << GetID() << " attacks " << target->GetID() << ". ";
     target->ReceiveAttack(damage);
-    turnCounter++;
 }
 
-void Medic::ReceiveAttack(int dmg){
-    setHealth(health-dmg);
-    cout << GetID() << " recieves " << dmg << "damage. Health = "<< GetHealth() <<endl;
+void Medic::ReceiveAttack(int dmg) {
+    setHealth(health - dmg);
+    cout << GetID() << " receives " << dmg << " damage. Health = " << GetHealth() << endl;
 }
+
 
 //medic -subclass survivor
 //like survivor attacks first mutant every turn but is equipped with medical ability

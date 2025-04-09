@@ -38,36 +38,33 @@ public:
 
 
 // Brawler: attacks and gains damage +2 after attack
-class Brawler: public Survivor{
+// Brawler: gains +2 damage every time it kills its target.
+class Brawler : public Survivor {
 public:
     Brawler(const std::string &id, int health, int damage);
     void TakeTurn(Combatant* target) override;
-    void ReceiveAttack(int damage) override;    
+    void ReceiveAttack(int damage) override;
 };
-
-
-// Acrobat - every four turns can dodge the next incoming attack
-class Acrobat: public Survivor{
+    
+// Acrobat: can dodge one attack every 4 turns.
+class Acrobat : public Survivor {
 public:
     Acrobat(const std::string &id, int health, int damage);
     void TakeTurn(Combatant* target) override;
     void ReceiveAttack(int damage) override;
 private:
-    bool dodgeAvailable;
-    int turnCounter;
-    int dodgeAmount;
+    int turnCount;
+    bool canDodge;
 };
-
-//medic- every 3 turns medic heals itself
-class Medic: public Survivor{
+    
+// Medic: heals 5 health every 3 turns before attacking.
+class Medic : public Survivor {
 public:
     Medic(const std::string &id, int health, int damage);
     void TakeTurn(Combatant* target) override;
     void ReceiveAttack(int damage) override;
-
 private:
-    bool healStatus;
-    int turnCounter;
-    bool healPoints;
+    int turnCount;
 };
+    
 #endif

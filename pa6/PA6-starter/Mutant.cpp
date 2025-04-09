@@ -53,84 +53,100 @@ void Zombie::ReceiveAttack(int dmg) {
 
 
 //come back to this
-Replicator::Replicator(const std::string &id, int health, int damage, SurvivorCamp* ptrCamp)
-    :Mutant(id, health, damage), turnCounter(0), _camp(ptrCamp){}
+Replicator::Replicator(const std::string &id, int health, int damage, SurvivorCamp* camp)
+    : Mutant(id, health, damage), turnCount(0), camp(camp) {}
 
-//copy constructor
+//copy constructor - doesn't try something else
+/*
 Replicator::Replicator(const Replicator& other)
     :Mutant(other.GetID(), other.health, other.damage),_camp(other._camp),turnCounter(0){}
-
+*/
 void Replicator::TakeTurn(Combatant* target) {
+    turnCount++;
+    if(turnCount % 2 == 1) {
+        Replicator* clone = new Replicator(GetID() + "_clone" + std::to_string(turnCount / 2 +1), health, damage, camp);
+        camp->AddMutant(clone);
+        cout << GetID() << " replicates itself, creating " << clone->GetID() << ". ";
+    }
     cout << GetID() << " attacks " << target->GetID() << ". ";
     target->ReceiveAttack(damage);
-    if((turnCounter % 2 == 0) && _camp != nullptr){
-        Replicator *clone = new Replicator(*this);//need the copy constructor for this
-        cout << GetID() << " creates clone " << endl;
-    }else if (_camp == nullptr){
-        cerr << GetID() << " has no camp  pointer " << endl;
-    }
-    turnCounter++;
 }
 
-
 void Replicator::ReceiveAttack(int dmg) {
-    setHealth(health-dmg);
+    setHealth(health - dmg);
     cout << GetID() << " takes " << dmg << " damage. Health = " << GetHealth() << endl;
 }
 
 
 //splitter
-Splitter::Splitter(const std::string &id, int health, int damage)
-    :Mutant(id, health, damage),turnCounter(0),acidStatus(false) {}
+Spitter::Spitter(const std::string &id, int health, int damage)
+    : Mutant(id, health, damage), turnCount(0) {}
 
-
-void Splitter::TakeTurn(Combatant* target){
-    if(turnCounter % 2 == 0){
-        acidStatus = true;
-        cout << GetID() << " gives poison" << endl;
-    }
-    else{
+void Spitter::TakeTurn(Combatant* target) {
+    turnCount++;
+    if((turnCount - 1) % 2 == 0) {
+        Survivor* surv = dynamic_cast<Survivor*>(target);
+        if (surv) {
+            surv->ApplyPoison();
+        }
+        cout << GetID() << " applies acid effect to " << surv->GetID() << ". \n";
+    } else {
         cout << GetID() << " attacks " << target->GetID() << ". ";
         target->ReceiveAttack(damage);
     }
-    turnCounter++;
 }
 
-void Splitter::ReceiveAttack(int dmg){
-    setHealth(health-dmg);
-    cout << GetID() << " takes " << dmg << " damage. Health = " << GetHealth() << endl;  
+void Spitter::ReceiveAttack(int dmg) {
+    setHealth(health - dmg);
+    cout << GetID() << " takes " << dmg << " damage. Health = " << GetHealth() << endl;
 }
 
 //mutantpack
-MutantPack::MutantPack(const std::string &id, int health, int damage)
-    :Mutant(id, health, damage), mutantsInPack() {}
+MutantPack::MutantPack(const std::string &id)
+    : Mutant(id, 0, 0) {} // Pack-level health/damage not used.
 
+MutantPack::~MutantPack() {
+    for(Mutant* m : pack) {
+        delete m;
+    }
+}
 
-bool MutantPack::IsDead() const{
-    return mutantsInPack.empty();
-} 
 void MutantPack::AddMutant(Mutant* mutant) {
-    mutantsInPack.push_back(mutant);
+    pack.push_back(mutant);
 }
 
-void MutantPack::TakeTurn(Combatant* target){
-    for(auto* n: mutantsInPack){
-        if(!n->IsDead()){
-            target->ReceiveAttack(damage);
+void MutantPack::TakeTurn(Combatant* target) {
+    // clean pack
+    for (auto it = pack.begin(); it != pack.end(); ) {
+        if ((*it)->IsDead()) {
+            it = pack.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    
+    cout << GetID() << " pack attacks " << target->GetID() << " with " << pack.size() << " mutants." << endl;
+    for(Mutant* m : pack) {
+        if(!m->IsDead()){
+            m->TakeTurn(target);
         }
     }
 }
 
-void MutantPack::ReceiveAttack(int dmg){
-    if(!mutantsInPack.empty()){
-        mutantsInPack.front()->ReceiveAttack(dmg);
-        if(mutantsInPack.front()->IsDead()){
-            delete mutantsInPack.front();
-            mutantsInPack.erase(mutantsInPack.begin());
-            if(mutantsInPack.empty()){
-                cout << GetID() << " has been defeated " << endl;
-            }
+void MutantPack::ReceiveAttack(int dmg) {
+    for(Mutant* m : pack) {
+        if(!m->IsDead()){
+            m->ReceiveAttack(dmg);
+            break;
         }
     }
+}
+
+bool MutantPack::IsDead() const {
+    for(Mutant* m : pack) {
+        if(!m->IsDead())
+            return false;
+    }
+    return true;
 }
 

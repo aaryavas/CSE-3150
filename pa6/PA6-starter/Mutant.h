@@ -34,44 +34,41 @@
         void ReceiveAttack(int damage) override;
     };
 
+
+    class SurvivorCamp; 
     // Replicator: Creates copy of itself every turn - come back to this 
     class Replicator : public Mutant {
     public:
-        Replicator(const std::string &id, int health, int damage, SurvivorCamp* ptrCamp);
-        //copy constructor
-        Replicator(const Replicator& other);
+        Replicator(const std::string &id, int health, int damage, SurvivorCamp* camp);
         void TakeTurn(Combatant* target) override;
         void ReceiveAttack(int damage) override;
-
-
     private:
-        SurvivorCamp* _camp;
-        int turnCounter;
+        int turnCount;
+        SurvivorCamp* camp;
     };
 
 
     //splitter: fights different
-    class Splitter: public Mutant {
+    class Spitter : public Mutant {
     public:
-        Splitter(const std::string &id, int health, int damage);
+        Spitter(const std::string &id, int health, int damage);
         void TakeTurn(Combatant* target) override;
         void ReceiveAttack(int damage) override;
     private:
-        bool acidStatus; 
-        int turnCounter;
-
+        int turnCount;
     };
 
-    class MutantPack: public Mutant {//come back to this we are 
+    //mutantpack
+;
+    class MutantPack : public Mutant {
     public:
-        MutantPack(const std::string &id, int health, int damage);
+        MutantPack(const std::string &id);
+        ~MutantPack();
+        void AddMutant(Mutant* mutant);     
         void TakeTurn(Combatant* target) override;
         void ReceiveAttack(int damage) override;
         bool IsDead() const override;
-        
-
-    private:    
-        std::vector<Mutant*> mutantsInPack;
-        int mutant;
+    private:
+        std::vector<Mutant*> pack;
     };
-    #endif;
+    #endif
