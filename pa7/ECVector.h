@@ -8,15 +8,15 @@
 
 using namespace std;
 
-template ...?
+template <typename T>
 class ECVector {
 private:
-    vector<...> coordinates; //coords is a vector of x, y, z, (etc) coordinates
+    vector<T> coordinates; //coords is a vector of x, y, z, (etc) coordinates
 	int dimension;
 
 public:
     //default constructor that accepts coordinates and updates dimension
-    ECVector(vector<...> _coordinates);
+    ECVector(vector<T> _coordinates);
 
     //destructor
     virtual ~ECVector();
@@ -32,26 +32,25 @@ public:
 	
     //access individual elements (need both to read and modify from index)
 	//read from index
-    ... operator[](const int& index) const;
+    T operator[](const int& index) const; //declared like const T& operator i think?
 	//modify index
-    ... operator[](const int& index);
+    T operator[](const int& index);
 
     //utility functions
     const int &getDimension() const {return dimension;}
-	//returns magnitude of vector
-	... getMagnitude() const;
+	//returns magnitude of vector - square root of the sum of squares
+	T getMagnitude() const;
 	//return normalized vector (vector with same direction, but magnitude = 1)
 	ECVector normalized();
 
     //vector-vector operations: +, -, * (dot product)
-	.
-	.
-	.
+	ECVector operator+(const ECVector &other) const;
+	ECVector operator-(const ECVector &other) const;
+	T operator*(const ECVector &other) const; //dot product- takes two vectors multiplies and gives us a single value
 	
     //scalar operations: *, /
-	.
-	.
-	.
+	ECVector operator*(const T &scalar) const; //scalar just increasing by multiplying the vector by the scalar value
+	ECVector operator/(const T &scalar) const; //same function as mutliplication just 1/x * v instead of x * v
 
     //print vector
     void display() const{
@@ -64,4 +63,4 @@ public:
 	}
 };
 
-#endif //ECVECTOR_H
+#endif //ECVECTOR_H - complete should work
