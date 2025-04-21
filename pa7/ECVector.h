@@ -34,7 +34,7 @@ public:
 	//read from index
     T operator[](const int& index) const; //declared like const T& operator i think?
 	//modify index
-    T operator[](const int& index);
+    T& operator[](const int& index);
 
     //utility functions
     const int &getDimension() const {return dimension;}
@@ -44,13 +44,31 @@ public:
 	ECVector normalized();
 
     //vector-vector operations: +, -, * (dot product)
-	ECVector operator+(const ECVector &other) const;
-	ECVector operator-(const ECVector &other) const;
-	T operator*(const ECVector &other) const; //dot product- takes two vectors multiplies and gives us a single value
+	ECVector operator+(const ECVector &other);
+	ECVector operator-(const ECVector &other);
+	T operator*(const ECVector &other); //dot product- takes two vectors multiplies and gives us a single value
 	
     //scalar operations: *, /
-	ECVector operator*(const T &scalar) const; //scalar just increasing by multiplying the vector by the scalar value
-	ECVector operator/(const T &scalar) const; //same function as mutliplication just 1/x * v instead of x * v
+	ECVector operator*(const T &scalar); //scalar just increasing by multiplying the vector by the scalar value
+	ECVector operator/(const T &scalar); //same function as mutliplication just 1/x * v instead of x * v
+
+	    //multiplication (left side)
+    friend ECVector operator*(const T& scalar, const ECVector& vec){
+        vector<T> result;
+        for(int i=0; i<vec.getDimension(); i++){
+            result.push_back(scalar * vec[i]);
+        }
+        return ECVector<T>(result);
+    }
+    //division (left side)
+    friend ECVector operator/(const T& scalar, const ECVector& vec){
+        vector<T> result;
+        for(int i=0; i<vec.getDimension(); i++){
+            result.push_back(scalar / vec[i]);
+        }
+        return ECVector<T>(result);
+    }
+
 
     //print vector
     void display() const{
