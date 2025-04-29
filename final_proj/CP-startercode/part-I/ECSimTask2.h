@@ -46,10 +46,12 @@ public:
     // your code here..   
     //behaves like soft interval but starts at time requested
     
+    //overridden as we are handling start differently
+    bool IsReadyToRun(int tick) const override;  
+
+
 private:
     ECSoftIntervalTask* soft;
-    int tmStart;
-    int tmEnd;
 };
 
 //***********************************************************
@@ -62,6 +64,17 @@ public:
     
     // your code here..
 
+    //is handled differently for stopping
+    //will stop when interrupted
+    //maybe IsFinished but I think it will use Run
+
+    virtual void Run(int tick, int duration) {tmTotRun += duration;}
+        
+    virtual bool IsFinished(int tick) const = 0;
+
+    //not sure which one to choose or to include both or not 
+private:
+    int tmTotRun;
 };
 
 //***********************************************************
@@ -73,7 +86,15 @@ public:
     // tickStart: when to start this periodic task; runLen: how long to run this task each time; sleepLen: after it finishes one run, hong long it will sleep
     ECPeriodicTask(const std::string &tid, int tmStart, int runLen, int sleepLen);
     
-    // your code here..    
+    // your code here..
+    
+    //occurs periodically for a fixed length
+    bool IsReadyToRun(int tick) const override; 
+    bool IsFinished(int tick) const override;
+
+private:
+    ECSoftIntervalTask* soft; 
+
 };
 
 #endif /* ECSimTask2_h */
