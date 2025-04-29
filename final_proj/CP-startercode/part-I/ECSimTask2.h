@@ -16,23 +16,21 @@
 
 //***********************************************************
 // Multiple intervasl task: a task spans multiple intervals of time; otherwise it behaves just like single (soft) interval
-
+using namespace std;
 class ECMultiIntervalsTask : public ECSimTask
 {
 public:
     ECMultiIntervalsTask(const std::string &tid);
     // your code here..
-    //AdddInterval Method - come back might be wrong
     int AddInterval(int a, int b); 
-    //outside of this behaves the same as soft interval
-    //use composition to fetch softinterval functionality
+    virtual bool IsReadyToRun(int tick) const override;
+    virtual bool IsFinished(int tick) const override;
 
 private:
-    //values added only needed within the function
-    ECSoftIntervalTask* soft; //composition of soft intervals
+    //composition of soft intervals
     int a;
     int b;
-
+    vector<ECSoftIntervalTask> softTask;
 };
 
 //***********************************************************
@@ -45,13 +43,22 @@ public:
     
     // your code here..   
     //behaves like soft interval but starts at time requested
-    
-    //overridden as we are handling start differently
+    //overridden as we are handling differently
     bool IsReadyToRun(int tick) const override;  
+    bool IsFinished(int tick) const override;
+    // Run the task: Critical for checking the hard start condition on the first call.
+    // Updates state (startedOnTime or failedToStart) based on 'tick'.
+    void Run(int tick, int duration) override;
+
+    // Wait: Critical for checking if the task missed its hard start time.
+    // Updates state (failedToStart) if Wait is called at tmStart.
+    void Wait(int tick, int duration) override;
 
 
 private:
-    ECSoftIntervalTask* soft;
+    int tmStart;
+    int tmEnd;
+
 };
 
 //***********************************************************
@@ -68,13 +75,24 @@ public:
     //will stop when interrupted
     //maybe IsFinished but I think it will use Run
 
-    virtual void Run(int tick, int duration) {tmTotRun += duration;}
-        
-    virtual bool IsFinished(int tick) const = 0;
+    bool IsReadyToRun(int tick) const override;
 
+    // Is task finished at 'tick'?
+    // Finished if the interval end time is passed OR if it was interrupted.
+    bool IsFinished(int tick) const override; // No longer pure virtual
+
+    // Run the task: Sets the 'hasStarted' flag on the first call.
+    void Run(int tick, int duration) override;
+
+    // Wait: Critical for detecting interruption.
+    // Sets the 'wasInterrupted' flag if called after the task has started.
+    void Wait(int tick, int duration) override;
     //not sure which one to choose or to include both or not 
 private:
-    int tmTotRun;
+    int tmStart;
+    int tmEnd;
+    //add more if needed 
+
 };
 
 //***********************************************************
@@ -91,6 +109,7 @@ public:
     //occurs periodically for a fixed length
     bool IsReadyToRun(int tick) const override; 
     bool IsFinished(int tick) const override;
+    
 
 private:
     ECSoftIntervalTask* soft; 
