@@ -58,6 +58,7 @@ public:
 private:
     int tmStart;
     int tmEnd;
+    bool failedToStart;
 
 };
 
@@ -93,7 +94,7 @@ private:
     int tmEnd;
     //add more if needed 
     int AddInterval(int a, int b);
-
+    
 };
 
 //***********************************************************

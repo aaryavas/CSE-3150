@@ -25,13 +25,20 @@ void ECMultiIntervalsTask::AddInterval(int a, int b){
 bool ECMultiIntervalsTask::IsReadyToRun(int tick) const{
     //similar approach to SoftIntervalTask except we need to iterate through
     for(auto i: softTask){
-        return tick >= i.first && tick <= i.second;
+        if(tick >= i.first && tick <= i.second){
+            return true;
+        }
     }
-    
+    return false;
 }
 
 bool ECMultiIntervalsTask::IsFinished(int tick) const{
-
+    for(auto i: softTask){
+        if(tick  <= i.second){
+            return false;
+        }
+    }
+    return true; 
 }
 
 
@@ -42,21 +49,81 @@ bool ECMultiIntervalsTask::IsFinished(int tick) const{
 //it must start at the time it requested
 //otherwise it behaves the same as soft interval
 using namespace std;
-ECHardIntervalTask::ECHardIntervalTask(const string &tid, int tmStartIn, int tmEndIn) : ECSimTask(tid), tmStart(tmStartIn), tmEnd(tmEndIn)
+ECHardIntervalTask::ECHardIntervalTask(const string &tid, int tmStartIn, int tmEndIn) 
+    : ECSimTask(tid), tmStart(tmStartIn), tmEnd(tmEndIn), failedToStart(false)
 {
+    if(tmStart > tmEnd){
+        failedToStart = true;
+    }
 }
 
 bool ECHardIntervalTask::IsReadyToRun(int tick) const{
+    //needs a hard indicator to start 
+    if(!failedToStart && tick >= tmStart && tick <= tmEnd){
+        return true;
+    }
+    return false;
 
 }
 
 bool ECHardIntervalTask::IsFinished(int tick) const{
+    if(!failedToStart && tick > tmEnd){
+        return true;
+    }
+    return false;
 }
 
 void ECHardIntervalTask::Run(int tick, int duration){
+    //run from start duration to end duration
+    //return == leaving/no longer running
+    if(failedToStart){
+        return; 
+    }
+
+    if(!startedOnTime){
+        if(tick == tmStart){
+            //started on time
+            startedOnTime = true;
+        }else{
+            //failed to start
+            failedToStart = true;
+            return;
+        }
+    }
+
+    //call base case
+    ECSimTask::Run(tick, duration);
 }
 
 void ECHardIntervalTask::Wait(int tick, int duration){
+    //if there is a pause in the running time
+
+    //doesn't start no waiting
+    if(failedToStart){
+        return;
+    }
+
+    if(startedOnTime){
+        //call base case
+        ECSimTask::Wait(tick, duration);
+    }
+
+    if(tick == tmStart && !startedOnTime){
+        failedToStart = true;
+        return;
+    }
+
+    //if haven't approached start then we want to wait until we do
+    if(tick < tmStart){
+        ECSimTask::Wait(tick, duration);
+
+    }
+    else if (tick >= tmStart && !startedOnTime){
+        //uh oh
+        failedToStart = true;
+        return; 
+    }
+
 }
 
 //ECConsecutiveTask
