@@ -93,8 +93,8 @@ private:
     int tmStart;
     int tmEnd;
     //add more if needed 
-    int AddInterval(int a, int b);
-    
+    bool hasStarted;
+    bool hasInterrupted;    
 };
 
 //***********************************************************
