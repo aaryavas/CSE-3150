@@ -22,7 +22,7 @@ class ECMultiIntervalsTask : public ECSimTask
 public:
     ECMultiIntervalsTask(const std::string &tid);
     // your code here..
-    int AddInterval(int a, int b); 
+    void AddInterval(int a, int b); 
     virtual bool IsReadyToRun(int tick) const override;
     virtual bool IsFinished(int tick) const override;
 
@@ -30,7 +30,7 @@ private:
     //composition of soft intervals
     int a;
     int b;
-    vector<ECSoftIntervalTask> softTask;
+    vector<pair<int, int>> softTask;
 };
 
 //***********************************************************
@@ -92,6 +92,7 @@ private:
     int tmStart;
     int tmEnd;
     //add more if needed 
+    int AddInterval(int a, int b);
 
 };
 
@@ -105,14 +106,30 @@ public:
     ECPeriodicTask(const std::string &tid, int tmStart, int runLen, int sleepLen);
     
     // your code here..
-    
-    //occurs periodically for a fixed length
-    bool IsReadyToRun(int tick) const override; 
-    bool IsFinished(int tick) const override;
-    
+    virtual bool IsReadyToRun(int tick) const override;
+
+    // Is task finished at 'tick'?
+    // For Part I, a basic periodic task might never truly finish on its own.
+    // It could be considered finished relative to its *current* run window
+    // if tick goes past the window's end, but it intends to run again.
+    // Let's assume it returns false unless a specific end condition exists.
+    // Alternatively, determines if the *current* active period is over.
+    // For simplicity here, we might define it based on current window end.
+    virtual bool IsFinished(int tick) const override;
+
+
+    // Run the task: Updates run time for the current cycle.
+    // Triggers transition to sleep state and calculates next run window
+    // when runLen ticks are completed for the current cycle.
+    virtual void Run(int tick, int duration) override;
+
+    // Wait: Updates wait time. May affect cycle timing if complex preemption occurs.
+    virtual void Wait(int tick, int duration) override;
 
 private:
-    ECSoftIntervalTask* soft; 
+    int tmStart; // The original start time provided
+    int runLen;         // Duration of each run period
+    int sleepLen;  
 
 };
 

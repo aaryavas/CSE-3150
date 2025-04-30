@@ -6,23 +6,34 @@
 
 #include "ECSimTask2.h"
 
-
+#include <string>
+#include <vector>
 //ECMultiIntervalsTask
 //taks consists of multiple intervals
 //AddInterval(int a, int b) that add an interval a,b to it 
 //otherwise behaves same as single soft interval
-ECMultiIntervalsTask::ECMultiIntervalsTask(const std::string &tid) : ECSimTask(tid)
+ECMultiIntervalsTask::ECMultiIntervalsTask(const std::string &tid) 
+    : ECSimTask(tid), a(0), b(0)
 {
 }
 
-bool ECMultiIntervalsTask::IsReadyToRun(int tick) const{
-    
+void ECMultiIntervalsTask::AddInterval(int a, int b){
+    //adds an interval to the vector
+    softTask.push_back(pair<int, int>(a,b));
+}
 
+bool ECMultiIntervalsTask::IsReadyToRun(int tick) const{
+    //similar approach to SoftIntervalTask except we need to iterate through
+    for(auto i: softTask){
+        return tick >= i.first && tick <= i.second;
+    }
+    
 }
 
 bool ECMultiIntervalsTask::IsFinished(int tick) const{
 
 }
+
 
 
 
@@ -36,6 +47,7 @@ ECHardIntervalTask::ECHardIntervalTask(const string &tid, int tmStartIn, int tmE
 }
 
 bool ECHardIntervalTask::IsReadyToRun(int tick) const{
+
 }
 
 bool ECHardIntervalTask::IsFinished(int tick) const{
