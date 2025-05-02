@@ -130,17 +130,27 @@ void ECHardIntervalTask::Wait(int tick, int duration){
 //Must run in a sonsecutive interbal
 //once interupted it will finish
 using namespace std;
-ECConsecutiveIntervalTask::ECConsecutiveIntervalTask(const string &tid, int tmStartIn, int tmEndIn) : ECSimTask(tid), tmStart(tmStartIn), tmEnd(tmEndIn)
+ECConsecutiveIntervalTask::ECConsecutiveIntervalTask(const string &tid, int tmStartIn, int tmEndIn) 
+    : ECSimTask(tid), tmStart(tmStartIn), tmEnd(tmEndIn), hasStarted(false), hasInterrupted(false)
 {
 }
 
 bool ECConsecutiveIntervalTask::IsReadyToRun(int tick) const{
+    if(tick >= tmStart && tick <= tmEnd){
+        return true;
+    }
+    return false;
 }
 
 bool ECConsecutiveIntervalTask::IsFinished(int tick) const{
+    if(tick > tmEnd){
+        return true;
+    }
+    return false;
 }
 
 void ECConsecutiveIntervalTask::Run(int tick, int duration){
+    
 }
 
 void ECConsecutiveIntervalTask::Wait(int tick, int duration){
